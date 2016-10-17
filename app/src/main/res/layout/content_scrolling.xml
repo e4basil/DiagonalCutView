@@ -7,8 +7,11 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:layout_gravity="center_horizontal|center_vertical"/>
+        android:layout_marginTop="320dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:textColor="#717171"
+        android:text="@string/description"/>
 </android.support.v4.widget.NestedScrollView>

@@ -1,6 +1,6 @@
 apply plugin: 'com.jfrog.bintray'
 
-version = '0.0.2' //YOUR LIBRARY VERSION
+version = libraryVersion
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
@@ -31,13 +31,22 @@ bintray {
 
     configurations = ['archives']
     pkg {
-        repo = 'maven'
-        name = 'diagonalcutview' //YOUR PACKAGE NAME
-        desc = 'Diagonal Cut View' // YOUR LIBRARY DESCRIPTION
-        websiteUrl = 'https://e4basil.github.io/DiagonalCutView/' // YOUR SITE
-        vcsUrl = 'https://github.com/e4basil/DiagonalCutView.git' // YOUR GIT REPO
-        licenses = ["Apache-2.0"] // A LIST OF YOUR LICENCES
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        userOrg = orgName
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
         publish = true
         publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
+                passphrase = properties.getProperty("bintray.gpg.password")
+                //Optional. The passphrase for GPG signing'
+            }
+        }
     }
 }

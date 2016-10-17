@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.3"
+    compileSdkVersion project.sdk
+    buildToolsVersion project.buildTools
 
     defaultConfig {
         applicationId "com.sprdh.android.diagonalcutview"
-        minSdkVersion 15
-        targetSdkVersion 24
+        minSdkVersion project.minSdk
+        targetSdkVersion project.sdk
         versionCode 1
         versionName "1.0"
     }
@@ -32,12 +32,13 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:appcompat-v7:'+project.supportVersion
     compile 'com.mikhaellopez:circularimageview:3.0.2'
-    compile 'com.android.support:design:24.2.1'
-
+    compile 'com.android.support:design:'+project.supportVersion
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'com.flaviofaria:kenburnsview:1.0.7'
     // colon needs to prefixed with the library path
-    debugCompile project(path: ':diagonalview', configuration: 'debug')
-    releaseCompile project(path: ':diagonalview', configuration: 'release')
+    compile project(path: ':diagonalview')
+
 
 }

@@ -89,3 +89,7 @@ hs_err_pid*
 
 /app/build/
 /local.properties
+
+
+# Keystore files
+*.jks

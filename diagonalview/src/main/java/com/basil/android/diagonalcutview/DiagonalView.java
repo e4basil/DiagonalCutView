@@ -7,13 +7,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 /**
  * Created by basi on 6/10/16.
  */
 
-public class DiagonalView extends ImageView {
+public class DiagonalView extends FrameLayout {
 
     private Context mContext;
 
@@ -77,33 +78,29 @@ public class DiagonalView extends ImageView {
         }
         mBackgroundColor = mTypedArray.getColor(R.styleable.diagonalcutview_background_color, Color.TRANSPARENT);
 
-        mTypedArray.recycle();
         mPaint.setColor(mDiagonalColor);
+        mTypedArray.recycle();
+
+        setWillNotDraw(false);
     }
 
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        calculateLayout();
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        if(changed)calculateLayout();
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        canvas.clipPath(mPath);
         super.onDraw(canvas);
 
-        canvas.drawColor(mBackgroundColor);
-
-        mHeight = getMeasuredHeight();
-        mWidth = getMeasuredWidth();
-
-        float perpendicularHeight = (float) (mWidth * Math.tan(Math.toRadians(mAngle)));
-
-        if (mDiagonalGravity.equals("right")) {
-            mPath.moveTo(mWidth, mHeight);
-            mPath.lineTo(0, mHeight - perpendicularHeight);
-            mPath.lineTo(0, mHeight + 1);
-        } else {
-            mPath.moveTo(0, mHeight);
-            mPath.lineTo(mWidth, mHeight - perpendicularHeight);
-            mPath.lineTo(mWidth, mHeight + 1);
-        }
-
-        canvas.drawPath(mPath, mPaint);
     }
 
 
@@ -120,12 +117,43 @@ public class DiagonalView extends ImageView {
     }
 
     public void setBackgroundColor(int color) {
-        mBackgroundColor = color;
+        this.mBackgroundColor = color;
         invalidate();
     }
 
     public void setDiagonalColor(int color) {
-        mDiagonalColor = color;
+        this.mDiagonalColor = color;
         invalidate();
+    }
+
+
+
+
+    private void calculateLayout(){
+        mHeight = getMeasuredHeight();
+        mWidth = getMeasuredWidth();
+        if(mWidth > 0 && mHeight > 0) {
+
+            float perpendicularHeight = (float) (mWidth * Math.tan(Math.toRadians(mAngle)));
+
+            if (mDiagonalGravity == RIGHT) {
+                mPath.moveTo(0, 0);
+                mPath.lineTo(mWidth, 0);
+                mPath.lineTo(mWidth, mHeight);
+                mPath.lineTo(0, mHeight - perpendicularHeight);
+                mPath.lineTo(0, 0);
+            } else {
+                mPath.moveTo(0, 0);
+                mPath.lineTo(mWidth, 0);
+                mPath.lineTo(mWidth, mHeight - perpendicularHeight);
+                mPath.lineTo(0, mHeight);
+                mPath.lineTo(0, 0);
+            }
+
+            //Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            //Canvas mCanvas = new Canvas(bitmap);
+            //mCanvas.drawPath(path, paint);
+            //setBackgroundDrawable(new BitmapDrawable(bitmap));
+        }
     }
 }

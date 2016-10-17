@@ -1,19 +1,18 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'com.jfrog.bintray'
+
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.3"
+    compileSdkVersion project.sdk
+    buildToolsVersion project.buildTools
 
 //    If you wish to build multiple variations, you will need to add this statement to your library
     publishNonDefault true
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 24
+        minSdkVersion project.minSdk
+        targetSdkVersion project.sdk
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -42,9 +41,39 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:appcompat-v7:' + project.supportVersion
+
     testCompile 'junit:junit:4.12'
 }
 
-apply from: 'install.gradle'
-apply from: 'bintray.gradle'
+
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'DiagonalCutView'
+    orgName = 'basil'
+
+    publishedGroupId = 'com.github.basi'
+    libraryName = 'DiagonalCutView'
+    artifact = 'DiagonalCutView'
+
+    libraryDescription = 'DiagonalLayout'
+
+    siteUrl = 'https://e4basil.github.io/DiagonalCutView/' // YOUR SITE
+    gitUrl = 'https://github.com/e4basil/DiagonalCutView.git' // YOUR GIT REPO
+
+    libraryVersion = rootProject.ext.libraryVersion
+
+    developerId = 'basil'
+    developerName = 'BASIL K'
+    developerEmail = 'e4basil@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+if (project.rootProject.file('local.properties').exists()) {
+    apply from: rootProject.file('gradle/install-v1.gradle')
+    apply from: rootProject.file('gradle/bintray-android-v1.gradle')
+}
