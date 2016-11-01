@@ -1,18 +1,20 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: "com.jfrog.bintray"
 
+// This is the library version used when deploying the artifact
+version = "1.0.1"
 
 android {
     compileSdkVersion project.sdk
     buildToolsVersion project.buildTools
 
-//    If you wish to build multiple variations, you will need to add this statement to your library
-    publishNonDefault true
 
     defaultConfig {
         minSdkVersion project.minSdk
         targetSdkVersion project.sdk
         versionCode 1
-        versionName "1.0.0"
+        versionName version
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -53,9 +55,10 @@ ext {
     bintrayName = 'DiagonalCutView'
     orgName = 'basil'
 
-    publishedGroupId = 'com.github.basi'
+    publishedGroupId = 'com.basil.android'
     libraryName = 'DiagonalCutView'
-    artifact = 'DiagonalCutView'
+    artifact = 'diagonalcutview'
+    group = "com.basil"                                          // Maven Group ID for the artifact
 
     libraryDescription = 'DiagonalLayout'
 
@@ -73,7 +76,92 @@ ext {
     allLicenses = ["Apache-2.0"]
 }
 
-if (project.rootProject.file('local.properties').exists()) {
-    apply from: rootProject.file('gradle/install-v1.gradle')
-    apply from: rootProject.file('gradle/bintray-android-v1.gradle')
+//if (project.rootProject.file('local.properties').exists()) {
+//    apply from: rootProject.file('gradle/install-v1.gradle')
+//    apply from: rootProject.file('gradle/bintray-android-v1.gradle')
+//}
+
+
+
+
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+
+                // Add your description here
+                name 'com.basi:diagonalcutview' // TODO
+                description = libraryDescription // TODO
+                url siteUrl
+
+                // Set your license
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id developerId // TODO
+                        name developerName // TODO
+                        email developerEmail // TODO
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection siteUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+// https://github.com/bintray/gradle-bintray-plugin
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = "maven"
+        // it is the name that appears in bintray when logged
+        name = "com.basi:diagonalcutview" // TODO
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+        version {
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
+                passphrase = properties.getProperty("bintray.gpg.password") //Optional. The passphrase for GPG signing'
+            }
+        }
+    }
 }
